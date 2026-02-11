@@ -1,102 +1,199 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+"use client";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  encryptAndSave,
+  fetchTransaction,
+  decryptTransaction,
+} from "@/lib/api";
+import { Lock, Unlock, Search, Shield } from "lucide-react";
 
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
+export default function HomePage() {
+  const [partyId, setPartyId] = useState("");
+  const [payload, setPayload] = useState("");
+  const [transactionId, setTransactionId] = useState("");
+  const [result, setResult] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleEncrypt = async () => {
+    setError(null);
+    setResult(null);
+    setLoading(true);
+
+    try {
+      const payloadObj = JSON.parse(payload);
+      const response = await encryptAndSave(partyId, payloadObj);
+      setResult(response);
+      setTransactionId(response.id);
+    } catch (err: any) {
+      setError(err.message || "Invalid JSON or encryption failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleFetch = async () => {
+    setError(null);
+    setResult(null);
+    setLoading(true);
+
+    try {
+      const response = await fetchTransaction(transactionId);
+      setResult(response);
+    } catch (err: any) {
+      setError(err.message || "Failed to fetch transaction");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDecrypt = async () => {
+    setError(null);
+    setResult(null);
+    setLoading(true);
+
+    try {
+      const response = await decryptTransaction(transactionId);
+      setResult(response);
+    } catch (err: any) {
+      setError(err.message || "Decryption failed");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
-
-export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-12 px-4">
+      <div className="max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-2">
+          <div className="flex items-center justify-center gap-2">
+            <Shield className="w-8 h-8 text-primary" />
+            <h1 className="text-4xl font-bold text-primary">
+              Secure Transaction Service
+            </h1>
+          </div>
+          <p className="text-muted-foreground">
+            AES-256-GCM Envelope Encryption Demo
+          </p>
         </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Lock className="w-5 h-5" />
+              Encrypt & Store
+            </CardTitle>
+            <CardDescription>
+              Enter your transaction data to encrypt and store securely
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="partyId">Party ID</Label>
+              <Input
+                id="partyId"
+                placeholder="party_123"
+                value={partyId}
+                onChange={(e) => setPartyId(e.target.value)}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="payload">JSON Payload</Label>
+              <Textarea
+                id="payload"
+                placeholder='{"amount": 100, "currency": "AED"}'
+                value={payload}
+                onChange={(e) => setPayload(e.target.value)}
+                rows={6}
+                className="font-mono text-sm"
+              />
+            </div>
+            <Button
+              onClick={handleEncrypt}
+              disabled={loading || !partyId || !payload}
+              className="w-full"
+            >
+              <Lock className="mr-2 h-4 w-4" />
+              Encrypt & Save
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Search className="w-5 h-5" />
+              Fetch & Decrypt
+            </CardTitle>
+            <CardDescription>
+              Retrieve and decrypt a stored transaction
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="transactionId">Transaction ID</Label>
+              <Input
+                id="transactionId"
+                placeholder="clxxxx..."
+                value={transactionId}
+                onChange={(e) => setTransactionId(e.target.value)}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleFetch}
+                disabled={loading || !transactionId}
+                variant="outline"
+                className="flex-1"
+              >
+                <Search className="mr-2 h-4 w-4" />
+                Fetch
+              </Button>
+              <Button
+                onClick={handleDecrypt}
+                disabled={loading || !transactionId}
+                className="flex-1"
+              >
+                <Unlock className="mr-2 h-4 w-4" />
+                Decrypt
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {error && (
+          <Card className="border-destructive">
+            <CardContent className="pt-6">
+              <p className="text-destructive font-semibold">Error: {error}</p>
+            </CardContent>
+          </Card>
+        )}
+
+        {result && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Result</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <pre className="bg-slate-100 p-4 rounded-lg overflow-x-auto text-sm font-mono">
+                {JSON.stringify(result, null, 2)}
+              </pre>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

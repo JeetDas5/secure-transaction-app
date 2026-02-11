@@ -12,3 +12,22 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model TxSecureRecord {
+  id        String   @id @default(cuid())
+  partyId   String
+  createdAt DateTime @default(now())
+
+  payload_nonce String
+  payload_ct    String
+  payload_tag   String
+
+  dek_wrap_nonce String
+  dek_wrapped    String
+  dek_wrap_tag   String
+
+  alg        String @default("AES-256-GCM")
+  mk_version Int    @default(1)
+
+  @@index([partyId])
+}
