@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { encryptRequestSchema } from "../schemas/transaction.js";
 import { encryptPayload, decryptPayload } from "../lib/crypto.js";
 import type { EncryptedPayload } from "@repo/crypto";
-import prisma from "../../../../packages/db/prisma";
+import prisma from '../../../../packages/db/prisma';
 
 export default async function transactionRoutes(fastify: FastifyInstance) {
   fastify.get("/", async () => {

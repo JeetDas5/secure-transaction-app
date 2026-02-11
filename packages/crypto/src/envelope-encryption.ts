@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
-import type { EncryptedPayload } from "./types";
-import { bytesToHex, hexToBytes, validateEncryptedData } from "./validation";
+import type { EncryptedPayload } from "./types.js";
+import { bytesToHex, hexToBytes, validateEncryptedData } from "./validation.js";
 
 const ALGORITHM = "aes-256-gcm";
 const DEK_SIZE = 32;

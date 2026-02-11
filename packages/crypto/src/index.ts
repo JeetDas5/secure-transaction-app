@@ -1,4 +1,4 @@
-export { envelopeEncrypt, envelopeDecrypt } from "./envelope-encryption";
+export { envelopeEncrypt, envelopeDecrypt } from "./envelope-encryption.js";
 export {
   validateNonce,
   validateTag,
@@ -7,9 +7,9 @@ export {
   isValidHex,
   hexToBytes,
   bytesToHex,
-} from "./validation";
+} from "./validation.js";
 export type {
   TxSecureRecord,
   EncryptedPayload,
   ValidationError,
-} from "./types";
+} from "./types.js";

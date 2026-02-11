@@ -1,4 +1,4 @@
-import type { ValidationError } from "./types";
+import type { ValidationError } from "./types.js";
 
 export function isValidHex(str: string): boolean {
   return /^[0-9a-fA-F]+$/.test(str) && str.length % 2 === 0;

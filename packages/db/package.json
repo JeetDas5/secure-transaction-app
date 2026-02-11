@@ -9,6 +9,7 @@
     "./generated/prisma/index.js": "./generated/prisma/index.js"
   },
   "scripts": {
+    "build": "echo 'db package is a library, no build needed'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
