@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 
+import { Toaster } from "@/components/ui/sonner";
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -13,7 +15,8 @@ const geistMono = localFont({
 
 export const metadata: Metadata = {
   title: "Secure Transaction App",
-  description: "A demo app showcasing AES-256-GCM Envelope Encryption for secure transaction storage and retrieval.",
+  description:
+    "A demo app showcasing AES-256-GCM Envelope Encryption for secure transaction storage and retrieval.",
 };
 
 export default function RootLayout({
@@ -25,6 +28,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         {children}
+        <Toaster />
       </body>
     </html>
   );

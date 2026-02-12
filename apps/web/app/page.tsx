@@ -18,17 +18,16 @@ import {
   decryptTransaction,
 } from "@/lib/api";
 import { Lock, Unlock, Search, Shield } from "lucide-react";
+import { toast } from "sonner";
 
 export default function HomePage() {
   const [partyId, setPartyId] = useState("");
   const [payload, setPayload] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [result, setResult] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const handleEncrypt = async () => {
-    setError(null);
     setResult(null);
     setLoading(true);
 
@@ -37,38 +36,39 @@ export default function HomePage() {
       const response = await encryptAndSave(partyId, payloadObj);
       setResult(response);
       setTransactionId(response.id);
+      toast.success("Transaction encrypted and saved successfully!");
     } catch (err: any) {
-      setError(err.message || "Invalid JSON or encryption failed");
+      toast.error(err.message || "Invalid JSON or encryption failed");
     } finally {
       setLoading(false);
     }
   };
 
   const handleFetch = async () => {
-    setError(null);
     setResult(null);
     setLoading(true);
 
     try {
       const response = await fetchTransaction(transactionId);
       setResult(response);
+      toast.success("Transaction fetched successfully!");
     } catch (err: any) {
-      setError(err.message || "Failed to fetch transaction");
+      toast.error(err.message || "Failed to fetch transaction");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDecrypt = async () => {
-    setError(null);
     setResult(null);
     setLoading(true);
 
     try {
       const response = await decryptTransaction(transactionId);
       setResult(response);
+      toast.success("Transaction decrypted successfully!");
     } catch (err: any) {
-      setError(err.message || "Decryption failed");
+      toast.error(err.message || "Decryption failed");
     } finally {
       setLoading(false);
     }
@@ -172,14 +172,6 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
-
-        {error && (
-          <Card className="border-destructive">
-            <CardContent className="pt-6">
-              <p className="text-destructive font-semibold">Error: {error}</p>
-            </CardContent>
-          </Card>
-        )}
 
         {result && (
           <Card>
