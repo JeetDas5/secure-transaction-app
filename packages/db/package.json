@@ -2,16 +2,17 @@
   "name": "db",
   "version": "1.0.0",
   "description": "",
-  "main": "./prisma.ts",
+  "main": "./dist/prisma.js",
+  "types": "./dist/prisma.d.ts",
   "type": "module",
   "exports": {
-    ".": "./prisma.ts",
-    "./prisma": "./prisma.ts",
+    ".": "./dist/prisma.js",
+    "./prisma": "./dist/prisma.js",
     "./generated/prisma": "./generated/prisma/index.js",
     "./generated/prisma/index.js": "./generated/prisma/index.js"
   },
   "scripts": {
-    "build": "prisma generate",
+    "build": "prisma generate && tsup src/prisma.ts --format esm --dts --external ../generated/prisma/index.js",
     "postinstall": "prisma generate",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:generate": "prisma generate",
@@ -27,6 +28,7 @@
     "@types/pg": "^8.16.0",
     "dotenv": "^17.2.4",
     "prisma": "^7.3.0",
+    "tsup": "^8.4.3",
     "tsx": "^4.21.0"
   },
   "dependencies": {
